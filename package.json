@@ -1,0 +1,22 @@
+{
+  "name": "startup-os",
+  "version": "1.0.0",
+  "description": "Yazılım Şirketi Açma Süreci Proje Yönetim Yazılımı",
+  "main": "index.html",
+  "scripts": {
+    "start": "lite-server",
+    "dev": "lite-server"
+  },
+  "keywords": [
+    "project-management",
+    "gantt",
+    "kanban",
+    "startup",
+    "dashboard"
+  ],
+  "author": "Antigravity",
+  "license": "ISC",
+  "devDependencies": {
+    "lite-server": "latest"
+  }
+}

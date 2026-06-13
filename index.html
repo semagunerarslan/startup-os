@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StartUp OS - Yazılım Şirketi Kurulumu Proje Yönetim Sistemi</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- CSS Dosyaları -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Yan Menü) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-rocket logo-icon"></i>
+                    <span class="logo-text">StartUp <span class="gradient-text">OS</span></span>
+                </div>
+                <div class="subtitle">Yazılım Şirketi Kurucu</div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#dashboard" class="menu-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Genel Bakış</span>
+                </a>
+                <a href="#gantt" class="menu-item" data-tab="gantt">
+                    <i class="fa-solid fa-timeline"></i>
+                    <span>Gantt Şeması</span>
+                </a>
+                <a href="#kanban" class="menu-item" data-tab="kanban">
+                    <i class="fa-solid fa-square-poll-horizontal"></i>
+                    <span>Kanban Pano</span>
+                </a>
+                <a href="#tasks-list" class="menu-item" data-tab="tasks-list">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Yapılacaklar Listesi</span>
+                </a>
+                <a href="#analytics" class="menu-item" data-tab="analytics">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Zaman & Grafikler</span>
+                </a>
+                <a href="#team" class="menu-item" data-tab="team">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Ekip Yönetimi</span>
+                </a>
+                <a href="#finance" class="menu-item" data-tab="finance">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Bütçe & Finans</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="profile-card">
+                    <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+                    <div class="profile-info">
+                        <div class="profile-name">Semanur Arslan</div>
+                        <div class="profile-role">Yönetici / CEO</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header (Üst Menü) -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="page-title">Genel Bakış</h1>
+                    <p class="text-muted" id="page-subtitle">Şirket kurulum süreci ve anlık durum raporu.</p>
+                </div>
+                <div class="header-right">
+                    <!-- Kişiselleştirilmiş İş Görünümü Seçimi -->
+                    <div class="user-selector-container">
+                        <label for="global-user-filter"><i class="fa-solid fa-filter"></i> Sorumlu:</label>
+                        <select id="global-user-filter" class="form-select">
+                            <option value="all">Tüm Ekip</option>
+                            <option value="Semanur Arslan">Semanur Arslan (Yönetici / CEO)</option>
+                            <option value="Ahmet Çelik">Ahmet Çelik (Mali Müşavir)</option>
+                            <option value="Av. Meltem Aksoy">Av. Meltem Aksoy (Hukuk Danışmanı)</option>
+                            <option value="Zeynep Yalçın">Zeynep Yalçın (UI/UX Tasarımcı)</option>
+                            <option value="Mert Yılmaz">Mert Yılmaz (Tech Lead)</option>
+                            <option value="Selin Kaya">Selin Kaya (Geliştirici)</option>
+                        </select>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="btn-quick-task" class="btn btn-primary">
+                            <i class="fa-solid fa-plus"></i> Görev Ekle
+                        </button>
+                        <button id="btn-quick-transaction" class="btn btn-secondary">
+                            <i class="fa-solid fa-plus"></i> İşlem Ekle
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- İlerleme Çubuğu (Proje Genel) -->
+            <div class="project-progress-bar-container">
+                <div class="progress-info">
+                    <span>Genel Kurulum Süreci Tamamlanma Oranı</span>
+                    <span id="project-progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="project-progress-fill" class="progress-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Sayfa Panelleri (SPA) -->
+            <div class="content-panels">
+                
+                <!-- 1. GENEL BAKIŞ PANELİ -->
+                <section id="panel-dashboard" class="tab-panel active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon icon-purple"><i class="fa-solid fa-list-check"></i></div>
+                            <div class="stat-details">
+                                <div class="stat-value" id="stat-tasks">0 / 0</div>
+                                <div class="stat-label">Tamamlanan Görevler</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-calendar-day"></i></div>
+                            <div class="stat-details">
+                                <div class="stat-value" id="stat-days-left">0 Gün Kalan</div>
+                                <div class="stat-label" id="stat-days-label">Proje Süresi</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                            <div class="stat-details">
+                                <div class="stat-value" id="stat-budget">₺0</div>
+                                <div class="stat-label">Kalan Bütçe</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon icon-rose"><i class="fa-solid fa-hourglass-half"></i></div>
+                            <div class="stat-details">
+                                <div class="stat-value" id="stat-runway">0 Ay</div>
+                                <div class="stat-label">Tahmini Finansal Dayanım</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <!-- Proje Sağlık Durumu & Zaman Projeksiyonu -->
+                        <div class="dashboard-card card-full">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-heart-pulse text-rose"></i> Proje Sağlık Durumu & Zaman Projeksiyonu</h3>
+                            </div>
+                            <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                                <!-- Zaman Çizelgesi Widget -->
+                                <div class="project-time-widget" style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700;">
+                                        <span>Proje Takvim İlerlemesi (Simüle Bugün: 11 Haz 2026)</span>
+                                        <span id="project-time-percentage">0%</span>
+                                    </div>
+                                    <div class="phase-bar-bg" style="height: 10px; background-color: var(--bg-tertiary);">
+                                        <div id="project-time-fill" class="phase-bar-fill" style="width: 0%; background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);"></div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">
+                                        <div>Başlangıç: <span id="project-time-start" style="color: var(--text-main);">01 Haz 2026</span></div>
+                                        <div>Planlanan Bitiş: <span id="project-time-end" style="color: var(--text-main);">15 Ağu 2026</span></div>
+                                        <div>Geçen Süre: <span id="project-time-elapsed" style="color: var(--text-main);">0 Gün</span></div>
+                                        <div>Kalan Süre: <span id="project-time-remaining" style="color: var(--text-main);">0 Gün</span></div>
+                                    </div>
+                                </div>
+                                <!-- Risk & Uyarılar Listesi -->
+                                <div class="project-health-widget" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 5px;"><i class="fa-solid fa-shield-halved text-blue"></i> Aktif Risk ve Sağlık Uyarıları</h4>
+                                    <div id="project-health-alerts" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 120px;">
+                                        <!-- Dinamik risk alert kutuları buraya yüklenecek -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Yaklaşan Kritik Görevler -->
+                        <div class="dashboard-card card-large">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-triangle-exclamation text-rose"></i> Kritik Yaklaşan Görevler</h3>
+                                <span class="badge badge-rose">Kritik</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="custom-table-container">
+                                    <table class="custom-table" id="table-upcoming-tasks">
+                                        <thead>
+                                            <tr>
+                                                <th>Görev</th>
+                                                <th>Aşama</th>
+                                                <th>Sorumlu</th>
+                                                <th>Son Tarih</th>
+                                                <th>Durum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- JS ile doldurulacak -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Finansal Özet Mini Grafik -->
+                        <div class="dashboard-card card-small">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-pie text-green"></i> Bütçe Dağılımı</h3>
+                            </div>
+                            <div class="card-body chart-container">
+                                <canvas id="chart-dashboard-finance"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Haftalık Çalışma Yoğunluğu Mini Grafik -->
+                        <div class="dashboard-card card-small">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-business-time text-purple"></i> Haftalık Çalışma Kaydı</h3>
+                            </div>
+                            <div class="card-body chart-container">
+                                <canvas id="chart-dashboard-hours"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Şirket Kurulum Aşamaları İlerleme Kartları -->
+                        <div class="dashboard-card card-large">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-diagram-project text-blue"></i> Şirket Kurulum Aşama Durumları</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="phases-progress-grid" id="phases-progress-container">
+                                    <!-- JS ile dinamik oluşturulacak -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. GANTT ŞEMASI PANELİ -->
+                <section id="panel-gantt" class="tab-panel">
+                    <div class="panel-header-actions">
+                        <div class="filter-group">
+                            <button class="btn btn-outline active" id="gantt-view-phases"><i class="fa-solid fa-diagram-project"></i> Süreç Odaklı</button>
+                            <button class="btn btn-outline" id="gantt-view-team"><i class="fa-solid fa-users"></i> Ekip Odaklı</button>
+                        </div>
+                        <div class="filter-group">
+                            <button class="btn btn-outline active" id="gantt-zoom-weeks">Haftalık</button>
+                            <button class="btn btn-outline" id="gantt-zoom-days">Günlük</button>
+                            <button class="btn btn-outline" id="gantt-zoom-hours">Saatlik</button>
+                            <button class="btn btn-outline" id="btn-toggle-critical-path"><i class="fa-solid fa-route text-rose"></i> Kritik Yol</button>
+                        </div>
+                        <div class="legend-group">
+                            <span class="legend-item"><span class="legend-dot bg-purple"></span> Planlama</span>
+                            <span class="legend-item"><span class="legend-dot bg-blue"></span> Yasal/Mali</span>
+                            <span class="legend-item"><span class="legend-dot bg-green"></span> Altyapı/İşler</span>
+                            <span class="legend-item"><span class="legend-dot bg-rose"></span> Pazarlama/Satış</span>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="gantt-wrapper" style="overflow-x: auto;">
+                            <div id="gantt-chart-container" style="position: relative; width: 100%; min-width: 1000px; padding: 10px;">
+                                <canvas id="gantt-chart-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. KANBAN / İŞ PLANI PANELİ -->
+                <section id="panel-kanban" class="tab-panel">
+                    <div class="kanban-filters">
+                        <div class="filter-item">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="kanban-search" placeholder="Görev ara..." class="form-input">
+                        </div>
+                        <div class="filter-item">
+                            <label for="kanban-priority-filter">Öncelik:</label>
+                            <select id="kanban-priority-filter" class="form-select">
+                                <option value="all">Tümü</option>
+                                <option value="Yüksek">Yüksek</option>
+                                <option value="Orta">Orta</option>
+                                <option value="Düşük">Düşük</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="kanban-phase-filter">Aşama:</label>
+                            <select id="kanban-phase-filter" class="form-select">
+                                <option value="all">Tüm Aşamalar</option>
+                                <!-- JS ile doldurulacak -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Kanban Board Izgarası (Kart Görünümü) -->
+                    <div class="kanban-board" id="kanban-board-view">
+                        <!-- To Do Column -->
+                        <div class="kanban-column" id="col-todo" data-status="To Do">
+                            <div class="column-header">
+                                <span class="column-title"><i class="fa-regular fa-circle text-muted"></i> Yapılacaklar</span>
+                                <span class="badge" id="count-todo">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-todo">
+                                <!-- Kartlar buraya yüklenecek -->
+                            </div>
+                        </div>
+
+                        <!-- In Progress Column -->
+                        <div class="kanban-column" id="col-progress" data-status="In Progress">
+                            <div class="column-header">
+                                <span class="column-title"><i class="fa-solid fa-circle-half-stroke text-blue"></i> Yapılıyor</span>
+                                <span class="badge badge-blue" id="count-progress">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-progress">
+                                <!-- Kartlar buraya yüklenecek -->
+                            </div>
+                        </div>
+
+                        <!-- Done Column -->
+                        <div class="kanban-column" id="col-done" data-status="Done">
+                            <div class="column-header">
+                                <span class="column-title"><i class="fa-solid fa-circle-check text-green"></i> Tamamlandı</span>
+                                <span class="badge badge-green" id="count-done">0</span>
+                            </div>
+                            <div class="kanban-cards-container" id="cards-done">
+                                <!-- Kartlar buraya yüklenecek -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3.5. YAPILACAKLAR LİSTESİ PANELİ -->
+                <section id="panel-tasks-list" class="tab-panel">
+                    <div class="kanban-filters">
+                        <div class="filter-item">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" id="tasks-search" placeholder="Görev ara..." class="form-input">
+                        </div>
+                        <div class="filter-item">
+                            <label for="tasks-priority-filter">Öncelik:</label>
+                            <select id="tasks-priority-filter" class="form-select">
+                                <option value="all">Tümü</option>
+                                <option value="Yüksek">Yüksek</option>
+                                <option value="Orta">Orta</option>
+                                <option value="Düşük">Düşük</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="tasks-phase-filter">Aşama:</label>
+                            <select id="tasks-phase-filter" class="form-select">
+                                <option value="all">Tüm Aşamalar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card" id="kanban-table-view" style="width: 100%; margin-top: 20px;">
+                        <div class="card-header" style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <h3><i class="fa-solid fa-list-check text-blue"></i> Tüm İş Planı Detay Listesi</h3>
+                            <button class="btn btn-xs btn-secondary" id="btn-export-tasks-csv"><i class="fa-solid fa-file-csv"></i> CSV Dışa Aktar</button>
+                        </div>
+                        <div class="custom-table-container">
+                            <table class="custom-table" id="table-tasks-list">
+                                <thead>
+                                    <tr>
+                                        <th>Görev Adı</th>
+                                        <th>Aşama</th>
+                                        <th>Sorumlu Kişi</th>
+                                        <th>Zaman Aralığı</th>
+                                        <th>Öncelik</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. ZAMAN & GRAFİKLER PANELİ -->
+                <section id="panel-analytics" class="tab-panel">
+                    <div class="analytics-actions">
+                        <div class="finance-top-grid" style="grid-template-columns: 3fr 2fr;">
+                            <div class="dashboard-card card-form">
+                                <div class="card-header">
+                                    <h3><i class="fa-solid fa-business-time text-purple"></i> Çalışma Süresi Kaydet</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-log-time" class="row-form">
+                                        <div class="form-group flex-2">
+                                            <label for="time-task-select">İlgili Görev</label>
+                                            <select id="time-task-select" class="form-select" required>
+                                                <!-- JS ile doldurulacak -->
+                                            </select>
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="time-duration">Süre (Saat)</label>
+                                            <input type="number" id="time-duration" class="form-input" min="0.5" max="24" step="0.5" required placeholder="Saat">
+                                        </div>
+                                        <div class="form-group flex-1">
+                                            <label for="time-date">Tarih</label>
+                                            <input type="date" id="time-date" class="form-input" required>
+                                        </div>
+                                        <div class="form-group align-end">
+                                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Kaydet</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Canlı Zaman Sayacı (Stopwatch) -->
+                            <div class="dashboard-card stopwatch-card">
+                                <div class="card-header" style="padding-bottom:10px; margin-bottom:10px;">
+                                    <h3><i class="fa-solid fa-stopwatch text-rose"></i> Canlı Zaman Sayacı</h3>
+                                    <span class="badge badge-warning" id="stopwatch-status">Duraklatıldı</span>
+                                </div>
+                                <div class="card-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:0;">
+                                    <div id="stopwatch-display" style="font-size: 2.2rem; font-weight: 800; letter-spacing: 2px; font-family: monospace; color: var(--text-main); margin-top:5px;">00:00:00</div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-xs btn-primary" id="btn-stopwatch-toggle"><i class="fa-solid fa-play"></i> Başlat</button>
+                                        <button class="btn btn-xs btn-outline" id="btn-stopwatch-reset"><i class="fa-solid fa-rotate-left"></i> Sıfırla</button>
+                                        <button class="btn btn-xs btn-secondary" id="btn-stopwatch-log" disabled><i class="fa-solid fa-circle-plus"></i> Süreyi Aktar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <!-- 1. Saatlik Yoğunluk Grafiği -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-clock text-blue"></i> Günlük Çalışma Saati Dağılımı (Saatlik)</h3>
+                                <div class="card-actions">
+                                    <button class="btn btn-xs btn-outline active" id="chart-hourly-today">Bugün</button>
+                                    <button class="btn btn-xs btn-outline" id="chart-hourly-yesterday">Dün</button>
+                                </div>
+                            </div>
+                            <div class="card-body chart-container-large">
+                                <canvas id="chart-hourly-activity"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 2. Günlük Üretkenlik Grafiği -->
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-calendar-day text-purple"></i> Günlük Çalışma Grafiği (Son 7 Gün)</h3>
+                            </div>
+                            <div class="card-body chart-container-large">
+                                <canvas id="chart-daily-productivity"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 3. Haftalık / Aylık Genel Durum Grafiği -->
+                        <div class="dashboard-card card-full">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-line text-green"></i> Haftalık & Aylık Görev İlerleme Grafiği</h3>
+                                <div class="card-actions">
+                                    <button class="btn btn-xs btn-outline active" id="btn-chart-weekly">Haftalık</button>
+                                    <button class="btn btn-xs btn-outline" id="btn-chart-monthly">Aylık</button>
+                                </div>
+                            </div>
+                            <div class="card-body chart-container-large">
+                                <canvas id="chart-weekly-monthly-progress"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 4. Görev Bazlı Çalışma Analizi Grafiği -->
+                        <div class="dashboard-card card-full">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-bar text-rose"></i> Görev Bazlı Çalışma Analizi</h3>
+                                <span class="text-muted" style="font-size:0.75rem;">Görevlerin toplam efor (harcanan saat) dağılımı.</span>
+                            </div>
+                            <div class="card-body chart-container-large">
+                                <canvas id="chart-task-hours"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. BÜTÇE & FİNANS PANELİ -->
+                <section id="panel-finance" class="tab-panel">
+                    <div class="finance-top-grid">
+                        <!-- Finans Giriş Formu -->
+                        <div class="dashboard-card card-form">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-money-bill-transfer text-green"></i> Gelir / Gider İşlemi Ekle</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-add-transaction">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="trans-title">Açıklama / Kalem</label>
+                                            <input type="text" id="trans-title" class="form-input" required placeholder="Örn: Noter Sözleşme Harçları">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="trans-type">İşlem Tipi</label>
+                                            <select id="trans-type" class="form-select" required>
+                                                <option value="Expense">Gider (Çıkış)</option>
+                                                <option value="Income">Gelir (Giriş / Sermaye)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="trans-amount">Tutar (₺)</label>
+                                            <input type="number" id="trans-amount" class="form-input" required min="1" placeholder="Örn: 4500">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="trans-category">Kategori</label>
+                                            <select id="trans-category" class="form-select" required>
+                                                <option value="Legal">Resmi İşlemler & Harçlar</option>
+                                                <option value="Office">Ofis & Kira</option>
+                                                <option value="Hardware">Cihaz & Donanım</option>
+                                                <option value="Software">Yazılım Lisansları</option>
+                                                <option value="Marketing">Reklam & Pazarlama</option>
+                                                <option value="HR">İşe Alım & İK</option>
+                                                <option value="Capital">Başlangıç Sermayesi</option>
+                                                <option value="Other">Diğer Giderler</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="trans-date">İşlem Tarihi</label>
+                                            <input type="date" id="trans-date" class="form-input" required>
+                                        </div>
+                                        <div class="form-group align-end">
+                                            <button type="submit" class="btn btn-primary btn-full"><i class="fa-solid fa-wallet"></i> İşlemi Kaydet</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Finansal Özet Kartı ve Runway Bilgisi -->
+                        <div class="dashboard-card budget-summary-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-calculator text-blue"></i> Finansal Durum & Runway</h3>
+                            </div>
+                            <div class="card-body flex-column-layout">
+                                <div class="capital-setup">
+                                    <label for="input-startup-capital">Başlangıç Sermayesi (₺):</label>
+                                    <div class="input-with-button">
+                                        <input type="number" id="input-startup-capital" class="form-input" value="500000">
+                                        <button id="btn-update-capital" class="btn btn-secondary">Güncelle</button>
+                                    </div>
+                                </div>
+                                <div class="runway-metrics">
+                                    <div class="runway-box">
+                                        <span class="runway-title">Toplam Sermaye / Gelir</span>
+                                        <span class="runway-val text-green" id="finance-total-income">₺0</span>
+                                    </div>
+                                    <div class="runway-box">
+                                        <span class="runway-title">Toplam Harcanan Gider</span>
+                                        <span class="runway-val text-rose" id="finance-total-expense">₺0</span>
+                                    </div>
+                                </div>
+                                <div class="runway-meter-container">
+                                    <div class="runway-gauge">
+                                        <div class="gauge-label">Aylık Ortalama Gider Hızı (Burn Rate)</div>
+                                        <div class="gauge-value" id="finance-burn-rate">₺0 / Ay</div>
+                                    </div>
+                                    <div class="runway-alert warning" id="runway-warning-box">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        <span id="runway-message">Tahmini dayanım süreniz hesaplanıyor...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gelir Gider Listesi (Çizelgesi) -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-list-ol text-blue"></i> Gelir / Gider İşlem Çizelgesi</h3>
+                            <div class="card-actions" style="display:flex; gap:10px; align-items:center;">
+                                <div class="filter-group">
+                                    <button class="btn btn-xs btn-outline active" id="filter-trans-all">Tümü</button>
+                                    <button class="btn btn-xs btn-outline" id="filter-trans-income">Gelirler</button>
+                                    <button class="btn btn-xs btn-outline" id="filter-trans-expense">Giderler</button>
+                                </div>
+                                <button class="btn btn-xs btn-secondary" id="btn-export-finance-csv"><i class="fa-solid fa-file-csv"></i> CSV Dışa Aktar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="custom-table-container">
+                                <table class="custom-table" id="table-transactions">
+                                    <thead>
+                                        <tr>
+                                            <th>İşlem Tarihi</th>
+                                            <th>Açıklama</th>
+                                            <th>Kategori</th>
+                                            <th>Tür</th>
+                                            <th>Tutar</th>
+                                            <th>İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. EKİP YÖNETİMİ PANELİ -->
+                <section id="panel-team" class="tab-panel">
+                    <div class="finance-top-grid">
+                        <!-- Ekip Üyesi Giriş Formu -->
+                        <div class="dashboard-card card-form">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-user-plus text-purple"></i> Yeni Ekip Üyesi Ekle</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-add-team-member">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="team-member-name">Ad Soyad</label>
+                                            <input type="text" id="team-member-name" class="form-input" required placeholder="Örn: Ahmet Yılmaz">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="team-member-role">Rol / Ünvan</label>
+                                            <select id="team-member-role" class="form-select" required>
+                                                <option value="Kurucu">Kurucu (Founder)</option>
+                                                <option value="Mali Müşavir">Mali Müşavir (CPA)</option>
+                                                <option value="Avukat">Avukat (Lawyer)</option>
+                                                <option value="Tasarımcı">Tasarımcı (Designer)</option>
+                                                <option value="Yazılım Ekibi">Yazılımcı (Dev)</option>
+                                                <option value="Pazarlama Uzmanı">Pazarlama Uzmanı</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="team-member-cost">Saatlik Ücret (₺)</label>
+                                            <input type="number" id="team-member-cost" class="form-input" required min="0" placeholder="Örn: 250">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="team-member-color">Profil Rengi</label>
+                                            <select id="team-member-color" class="form-select" required>
+                                                <option value="purple">Mor</option>
+                                                <option value="blue">Mavi</option>
+                                                <option value="green">Yeşil</option>
+                                                <option value="rose">Pembe</option>
+                                                <option value="warning">Turuncu</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group align-end" style="margin-bottom:0;">
+                                            <button type="submit" class="btn btn-primary btn-full"><i class="fa-solid fa-check"></i> Üyeyi Ekle</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Ekip Özet Bilgisi -->
+                        <div class="dashboard-card budget-summary-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-users-gear text-blue"></i> Ekip Dağılımı ve Kapasite</h3>
+                            </div>
+                            <div class="card-body flex-column-layout" style="gap: 15px;">
+                                <p class="text-muted" style="font-size:0.85rem;">Şirket açılış sürecinde rol alan tüm danışmanlar ve ekip üyeleri. Sorumluluk filtreleri aracılığıyla kişiye özel iş yükü analiz edilebilir.</p>
+                                <div class="runway-metrics" style="grid-template-columns: 1fr; margin-top:0;">
+                                    <div class="runway-box" style="padding:12px;">
+                                        <span class="runway-title">Toplam Ekip Büyüklüğü</span>
+                                        <span class="runway-val text-green" id="team-total-count">0 Kişi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ekip Listesi -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-list-check text-blue"></i> Ekip Üyeleri ve İş Yükü Dağılımı</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="custom-table-container">
+                                <table class="custom-table" id="table-team-members">
+                                    <thead>
+                                        <tr>
+                                            <th>Üye</th>
+                                            <th>Rol</th>
+                                            <th>Saatlik Maliyet</th>
+                                            <th>Atanan Görevler</th>
+                                            <th>Tamamlanan</th>
+                                            <th>İlerleme</th>
+                                            <th>İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- JS ile doldurulacak -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- HIZLI GÖREV EKLEME MODALI -->
+    <div class="modal-backdrop" id="modal-task">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-task-title">Yeni Görev Ekle</h3>
+                <button class="modal-close" id="modal-task-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-task">
+                    <input type="hidden" id="task-id">
+                    <div class="form-group">
+                        <label for="task-title">Görev Başlığı</label>
+                        <input type="text" id="task-title" class="form-input" required placeholder="Görev adını giriniz">
+                    </div>
+                    <div class="form-group">
+                        <label for="task-description">Açıklama</label>
+                        <textarea id="task-description" class="form-input" rows="3" placeholder="Görev ayrıntılarını yazınız"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-phase">Aşama</label>
+                            <select id="task-phase" class="form-select" required>
+                                <!-- JS ile doldurulacak -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-assignee">Sorumlu Kişi</label>
+                            <select id="task-assignee" class="form-select" required>
+                                <option value="Semanur Arslan">Semanur Arslan (Yönetici / CEO)</option>
+                                <option value="Ahmet Çelik">Ahmet Çelik (Mali Müşavir)</option>
+                                <option value="Av. Meltem Aksoy">Av. Meltem Aksoy (Hukuk Danışmanı)</option>
+                                <option value="Zeynep Yalçın">Zeynep Yalçın (UI/UX Tasarımcı)</option>
+                                <option value="Mert Yılmaz">Mert Yılmaz (Tech Lead)</option>
+                                <option value="Selin Kaya">Selin Kaya (Geliştirici)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-priority">Öncelik</label>
+                            <select id="task-priority" class="form-select" required>
+                                <option value="Düşük">Düşük</option>
+                                <option value="Orta" selected>Orta</option>
+                                <option value="Yüksek">Yüksek</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-status">Durum</label>
+                            <select id="task-status" class="form-select" required>
+                                <option value="To Do">Yapılacaklar (To Do)</option>
+                                <option value="In Progress">Yapılıyor (In Progress)</option>
+                                <option value="Done">Tamamlandı (Done)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-start-date">Başlangıç Tarihi</label>
+                            <input type="date" id="task-start-date" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-end-date">Bitiş Tarihi</label>
+                            <input type="date" id="task-end-date" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" id="modal-task-cancel">İptal</button>
+                        <button type="submit" class="btn btn-primary" id="modal-task-submit">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HIZLI İŞLEM EKLEME MODALI -->
+    <div class="modal-backdrop" id="modal-transaction">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Yeni Finansal İşlem Ekle</h3>
+                <button class="modal-close" id="modal-trans-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-modal-transaction">
+                    <div class="form-group">
+                        <label for="m-trans-title">İşlem Açıklaması</label>
+                        <input type="text" id="m-trans-title" class="form-input" required placeholder="Örn: Ofis depozitosu ödemesi">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="m-trans-type">İşlem Türü</label>
+                            <select id="m-trans-type" class="form-select" required>
+                                <option value="Expense">Gider (Çıkış)</option>
+                                <option value="Income">Gelir (Giriş)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="m-trans-category">Kategori</label>
+                            <select id="m-trans-category" class="form-select" required>
+                                <option value="Legal">Resmi İşlemler & Harçlar</option>
+                                <option value="Office">Ofis & Kira</option>
+                                <option value="Hardware">Cihaz & Donanım</option>
+                                <option value="Software">Yazılım Lisansları</option>
+                                <option value="Marketing">Reklam & Pazarlama</option>
+                                <option value="HR">İşe Alım & İK</option>
+                                <option value="Capital">Başlangıç Sermayesi</option>
+                                <option value="Other">Diğer Giderler</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="m-trans-amount">Tutar (₺)</label>
+                            <input type="number" id="m-trans-amount" class="form-input" required min="1" placeholder="Tutar girin">
+                        </div>
+                        <div class="form-group">
+                            <label for="m-trans-date">Tarih</label>
+                            <input type="date" id="m-trans-date" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" id="modal-trans-cancel">İptal</button>
+                        <button type="submit" class="btn btn-primary">İşlemi Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS Yükleme -->
+    <script src="js/data.js"></script>
+    <script src="js/gantt.js"></script>
+    <script src="js/kanban.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/finance.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
